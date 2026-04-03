@@ -1,40 +1,81 @@
-name: Build Windows EXE
+name: Build All OS (Windows, Mac, Linux)
 
-# Esto le dice a GitHub que ejecute este proceso cada vez que subas código nuevo (push)
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  build:
-    # "Abre una computadora virtual con Windows"
+  # ---------------------------------------------
+  # 1. COMPILACIÓN PARA WINDOWS
+  # ---------------------------------------------
+  build-windows:
     runs-on: windows-latest
-
     steps:
-    # 1. Descarga tu código a la computadora virtual
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    # 2. "Instálale Python"
+    - uses: actions/checkout@v4
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11' # Usamos una versión estable de Python
-
-    # 3. "Instala ttkbootstrap y PyInstaller"
+        python-version: '3.11'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pyinstaller ttkbootstrap
-
-    # 4. "Corre PyInstaller"
-    - name: Build EXE with PyInstaller
-      run: |
-        pyinstaller --windowed --onefile CanvasQuizMakerv03.py
-
-    # 5. Guarda el archivo .exe para que lo puedas descargar
+    - name: Build EXE
+      run: pyinstaller --windowed --onefile CanvasQuizMakerv03.py
     - name: Upload Windows EXE
       uses: actions/upload-artifact@v4
       with:
         name: CanvasQuizMaker-Windows
         path: dist/CanvasQuizMakerv03.exe
+
+  # ---------------------------------------------
+  # 2. COMPILACIÓN PARA MACOS
+  # ---------------------------------------------
+  build-mac:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller ttkbootstrap
+    - name: Build APP
+      run: pyinstaller --windowed CanvasQuizMakerv03.py
+    - name: Zip Mac APP bundle
+      run: |
+        cd dist
+        zip -r CanvasQuizMaker-Mac.zip CanvasQuizMakerv03.app
+    - name: Upload Mac ZIP
+      uses: actions/upload-artifact@v4
+      with:
+        name: CanvasQuizMaker-Mac
+        path: dist/CanvasQuizMaker-Mac.zip
+
+  # ---------------------------------------------
+  # 3. COMPILACIÓN PARA LINUX
+  # ---------------------------------------------
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install System Dependencies for Tkinter
+      run: sudo apt-get update && sudo apt-get install -y python3-tk
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller ttkbootstrap
+    - name: Build Linux Executable
+      run: pyinstaller --windowed --onefile CanvasQuizMakerv03.py
+    - name: Upload Linux File
+      uses: actions/upload-artifact@v4
+      with:
+        name: CanvasQuizMaker-Linux
+        path: dist/CanvasQuizMakerv03
