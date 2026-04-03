@@ -1,0 +1,40 @@
+name: Build Windows EXE
+
+# Esto le dice a GitHub que ejecute este proceso cada vez que subas código nuevo (push)
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    # "Abre una computadora virtual con Windows"
+    runs-on: windows-latest
+
+    steps:
+    # 1. Descarga tu código a la computadora virtual
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. "Instálale Python"
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' # Usamos una versión estable de Python
+
+    # 3. "Instala ttkbootstrap y PyInstaller"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller ttkbootstrap
+
+    # 4. "Corre PyInstaller"
+    - name: Build EXE with PyInstaller
+      run: |
+        pyinstaller --windowed --onefile CanvasQuizMakerv03.py
+
+    # 5. Guarda el archivo .exe para que lo puedas descargar
+    - name: Upload Windows EXE
+      uses: actions/upload-artifact@v4
+      with:
+        name: CanvasQuizMaker-Windows
+        path: dist/CanvasQuizMakerv03.exe
