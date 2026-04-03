@@ -21,7 +21,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller ttkbootstrap
     - name: Build EXE
-      run: pyinstaller --windowed --onefile CanvasQuizMakerv03.py
+      run: pyinstaller -y --windowed --onefile CanvasQuizMakerv03.py
     - name: Upload Windows EXE
       uses: actions/upload-artifact@v4
       with:
@@ -44,7 +44,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller ttkbootstrap
     - name: Build APP
-      run: pyinstaller --windowed CanvasQuizMakerv03.py
+      run: pyinstaller -y --windowed CanvasQuizMakerv03.py
     - name: Zip Mac APP bundle
       run: |
         cd dist
@@ -73,7 +73,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller ttkbootstrap
     - name: Build Linux Executable
-      run: pyinstaller --windowed --onefile CanvasQuizMakerv03.py
+      run: pyinstaller -y --windowed --onefile CanvasQuizMakerv03.py
     - name: Upload Linux File
       uses: actions/upload-artifact@v4
       with:
